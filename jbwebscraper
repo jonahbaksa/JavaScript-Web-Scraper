@@ -1,0 +1,81 @@
+const puppeteer = require('puppeteer');
+const fs = require('fs/promises');
+require('events').EventEmitter.defaultMaxListeners = 20;
+
+(async () => {
+
+//Berkshire East
+const bebrowser = await puppeteer.launch();
+const bepage = await bebrowser.newPage();
+await bepage.goto('https://www.onthesnow.com/massachusetts/berkshire-east/trailmap');
+const bewbrowser = await puppeteer.launch();
+const bewpage = await bewbrowser.newPage();
+await bewpage.goto('https://weather.com/weather/weekend/l/889e09df1593fdead117d45dc42df56c74e7600eee3470e12b0b773977b2fba2');
+
+//Black Mountain, NH
+const blanbrowser = await puppeteer.launch();
+const blanpage = await blanbrowser.newPage();
+await blanpage.goto('https://www.onthesnow.com/new-hampshire/black-mountain/trailmap');
+const blanwbrowser = await puppeteer.launch();
+const blanwpage = await blanwbrowser.newPage();
+await blanwpage.goto('https://weather.com/weather/weekend/l/f21d5b0472b0197be021ef7b57048ee87ad4ff73dfcc4bd93032ae6242056e37');
+
+
+
+
+//Berkshire East
+const [be1] = await bepage.$x('//*[@id="__next"]/div[4]/div[2]/div/article[2]/div[2]/div/div[1]/div[2]/div[1]');
+const be1txt = await be1.getProperty('textContent');
+const be1e = await be1txt.jsonValue();
+const [be2] = await bepage.$x('//*[@id="__next"]/div[4]/div[2]/div/article[2]/div[2]/div/div[2]/div[2]/div[1]');
+const be2txt = await be2.getProperty('textContent');
+const be2m = await be2txt.jsonValue();
+const [be3] = await bepage.$x('//*[@id="__next"]/div[4]/div[2]/div/article[2]/div[2]/div/div[3]/div[2]/div[1]');
+const be3txt = await be3.getProperty('textContent');
+const be3d = await be3txt.jsonValue();
+const [be4] = await bepage.$x('//*[@id="__next"]/div[4]/div[2]/div/article[2]/div[2]/div/div[4]/div[2]/div[1]');
+const be4txt = await be4.getProperty('textContent');
+const be4x = await be4txt.jsonValue();
+const [be5] = await bewpage.$x('//*[@id="WxuWeekendCard-main-393aaed8-18b4-4961-8b85-0cd9ea2e4dbd"]/section/div[2]/details[2]/div/div[1]/p');
+const be5txt = await be5.getProperty('textContent');
+const bew1 = await be5txt.jsonValue();
+const [be6] = await bewpage.$x('//*[@id="WxuWeekendCard-main-393aaed8-18b4-4961-8b85-0cd9ea2e4dbd"]/section/div[2]/details[3]/div/div[1]/p');
+const be6txt = await be6.getProperty('textContent');
+const bew2 = await be6txt.jsonValue();
+
+//Black Mountain, NH
+const [blan1] = await blanpage.$x('//*[@id="__next"]/div[4]/div[2]/div/article[2]/div[2]/div/div[1]/div[2]/div[1]');
+const blan1txt = await blan1.getProperty('textContent');
+const blan1e = await blan1txt.jsonValue();
+const [blan2] = await blanpage.$x('//*[@id="__next"]/div[4]/div[2]/div/article[2]/div[2]/div/div[2]/div[2]/div[1]');
+const blan2txt = await blan2.getProperty('textContent');
+const blan2m = await blan2txt.jsonValue();
+const [blan3] = await blanpage.$x('//*[@id="__next"]/div[4]/div[2]/div/article[2]/div[2]/div/div[3]/div[2]/div[1]');
+const blan3txt = await blan3.getProperty('textContent');
+const blan3d = await blan3txt.jsonValue();
+const [blan4] = await blanpage.$x('//*[@id="__next"]/div[4]/div[2]/div/article[2]/div[2]/div/div[4]/div[2]/div[1]');
+const blan4txt = await blan4.getProperty('textContent');
+const blan4x = await blan4txt.jsonValue();
+const [blan5] = await blanwpage.$x('//*[@id="WxuWeekendCard-main-393aaed8-18b4-4961-8b85-0cd9ea2e4dbd"]/section/div[2]/details[2]/div/div[1]/p');
+const blan5txt = await blan5.getProperty('textContent');
+const blanw1 = await blan5txt.jsonValue();
+const [blan6] = await blanwpage.$x('//*[@id="WxuWeekendCard-main-393aaed8-18b4-4961-8b85-0cd9ea2e4dbd"]/section/div[2]/details[3]/div/div[1]/p');
+const blan6txt = await blan6.getProperty('textContent');
+const blanw2 = await blan6txt.jsonValue();
+
+
+const scrapers = [
+    "Indy Pass - Weather/Snow Reports",,
+    "Berkshire East -","Trails Open: ",  "Easy Trails: " + be1e,"Intermediate Trails: " + be2m,"Advanced Trails: " + be3d, "Expert Trails: " + be4x, "Saturday: " + bew1, "Sunday: " + bew2,,
+    "Black Mountain, NH -","Trails Open: ",  "Easy Trails: " + blan1e,"Intermediate Trails: " + blan2m,"Advanced Trails: " + blan3d, "Expert Trails: " + blan4x, "Saturday: " + blanw1, "Sunday: " + blanw2,,
+]
+
+await fs.writeFile("scrapers.html", scrapers.join("<br>"));
+console.log({be1});
+
+await bebrowser.close();
+await bewbrowser.close();
+await blanbrowser.close();
+await blanwbrowser.close();
+
+})();
